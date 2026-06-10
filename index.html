@@ -3,518 +3,558 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ona Energy Dashboard 2026</title>
-
+<title>Ona Energy Dashboard 2026 · Executive Benchmark</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
 <style>
 :root{
-  --bg:#f4f6f9;
+  --bg:#f3f6fb;
   --surface:#ffffff;
-  --surface-2:#e2e8f0;
+  --surface-soft:#f8fafc;
   --text:#0f172a;
-  --muted:#475569;
-  --primary:#0ea5e9;
-  --primary-dark:#0284c7;
-  --header:#0f172a;
-  --good:#ecfdf5;
-  --bad:#fee2e2;
-  --warn:#fff7ed;
-  --info:#eff6ff;
+  --muted:#64748b;
   --border:#dbe4ee;
-  --shadow:0 8px 30px rgba(15,23,42,.08);
-  --radius:14px;
+  --header:#0f172a;
+  --primary:#0284c7;
+  --good:#15803d;
+  --bad:#dc2626;
+  --warn:#b45309;
+  --shadow:0 10px 30px rgba(15,23,42,.08);
+  --radius:16px;
 }
-
 *{box-sizing:border-box}
-
 body{
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   margin:0;
-  background:var(--bg);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(180deg,#f8fbff 0%,#f3f6fb 220px);
   color:var(--text);
 }
-
 .header{
   background:var(--header);
   color:#fff;
-  padding:16px 20px;
+  padding:18px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  box-shadow:0 4px 16px rgba(0,0,0,.12);
+}
+.header-left{
   display:flex;
   align-items:center;
   gap:14px;
-  flex-wrap:wrap;
-  box-shadow:0 2px 10px rgba(0,0,0,.12);
 }
-
 .header img{
-  height:42px;
+  height:44px;
   width:auto;
   object-fit:contain;
   border-radius:8px;
   background:rgba(255,255,255,.06);
   padding:4px;
 }
-
-.header .title-wrap{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-}
-
-.header .title{
-  font-size:1.1rem;
-  font-weight:700;
-  line-height:1.2;
-}
-
-.header .subtitle{
-  font-size:.9rem;
-  color:rgba(255,255,255,.75);
-}
-
-.section{
-  padding:24px 16px 36px;
-}
-
-.container{
-  max-width:1240px;
-  margin:0 auto;
-}
-
-.card{
-  background:var(--surface);
-  border-radius:var(--radius);
-  padding:22px;
-  box-shadow:var(--shadow);
-  border:1px solid var(--border);
-}
-
-.card h2{
-  margin:0 0 8px;
-  font-size:1.35rem;
-}
-
-.card p{
-  margin:0 0 18px;
-  color:var(--muted);
-}
-
-.controls{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-select,
-button{
-  font:inherit;
-}
-
-select{
-  padding:12px 14px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  min-width:300px;
-  background:#fff;
-  color:var(--text);
-}
-
-button{
-  padding:11px 16px;
-  border:none;
-  border-radius:10px;
-  background:var(--primary);
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  transition:.2s ease;
-}
-
-button:hover{
-  background:var(--primary-dark);
-}
-
-button.secondary{
-  background:#e2e8f0;
-  color:#0f172a;
-}
-
-button.secondary:hover{
-  background:#cbd5e1;
-}
-
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:16px;
-  margin-bottom:18px;
-  flex-wrap:wrap;
-}
-
-.topbar h2{
-  margin:0;
-}
-
-.topbar p{
-  margin:4px 0 0;
-  color:var(--muted);
-}
-
-.kpis{
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(min(170px, 100%), 1fr));
-  gap:12px;
-  margin:18px 0 20px;
-}
-
-.kpi{
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:16px;
-  border-radius:12px;
-  box-shadow:var(--shadow);
-}
-
-.kpi.bad{background:var(--bad);}
-.kpi.good{background:var(--good);}
-.kpi.warn{background:var(--warn);}
-.kpi.info{background:var(--info);}
-
-.kpi .label{
-  font-size:.85rem;
-  color:var(--muted);
-  margin-bottom:8px;
-}
-
-.kpi .value{
-  font-size:1.15rem;
-  font-weight:800;
-  color:var(--text);
-  line-height:1.25;
-}
-
-.filters{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px 18px;
-  align-items:center;
-  margin:8px 0 18px;
-  padding:14px 16px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  box-shadow:var(--shadow);
-}
-
-.filters strong{
-  margin-right:4px;
-}
-
-.filters label{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:600;
-  color:var(--text);
-  cursor:pointer;
-}
-
-.filters input[type="checkbox"]{
-  width:16px;
-  height:16px;
-}
-
-.chart-card{
-  background:var(--surface);
-  border-radius:var(--radius);
-  padding:10px;
-  box-shadow:var(--shadow);
-  border:1px solid var(--border);
-}
-
-#chart{
-  width:100%;
-  min-height:580px;
-}
-
-#rankingChart{
-  width:100%;
-  min-height:520px;
-}
-
-.help{
-  margin-top:12px;
-  font-size:.92rem;
-  color:var(--muted);
-}
-
-.hidden{
-  display:none !important;
-}
-
 .logo-fallback{
   display:none;
-  width:42px;
-  height:42px;
+  width:44px;
+  height:44px;
   border-radius:10px;
   align-items:center;
   justify-content:center;
   background:#1e293b;
-  color:white;
+  color:#fff;
   font-weight:800;
 }
-
-.table-wrap{
-  overflow-x:auto;
-  width:100%;
+.header-title{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
 }
-
-#rankingTable{
-  width:100%;
-  border-collapse:collapse;
-  min-width:1080px;
+.header-title h1{
+  margin:0;
+  font-size:1.15rem;
+  line-height:1.2;
 }
-
-#rankingTable th,
-#rankingTable td{
-  padding:10px 12px;
-  border-bottom:1px solid var(--border);
-  white-space:nowrap;
-  font-size:.95rem;
+.header-title p{
+  margin:0;
+  color:rgba(255,255,255,.72);
+  font-size:.92rem;
 }
-
-#rankingTable thead tr{
-  background:#f8fafc;
+.header-badge{
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  font-size:.88rem;
+  color:rgba(255,255,255,.82);
 }
-
-#rankingTable tbody tr:hover{
-  background:#f8fafc;
+main{
+  padding:24px 16px 40px;
 }
-
-.rank-good{
-  background:#ecfdf5;
+.container{
+  max-width:1320px;
+  margin:0 auto;
 }
-
-.rank-bad{
-  background:#fef2f2;
+.grid{
+  display:grid;
+  gap:18px;
 }
-
+.top-layout{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+  align-items:start;
+}
+.second-layout{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+  align-items:start;
+}
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:20px;
+}
+.card h2{
+  margin:0 0 6px;
+  font-size:1.18rem;
+}
+.card p{
+  margin:0;
+  color:var(--muted);
+}
+select,button{
+  font:inherit;
+}
+select{
+  min-width:220px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+}
+button{
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  font-weight:700;
+  padding:12px 16px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.2s ease;
+}
+button:hover{
+  filter:brightness(.95);
+}
+button.secondary{
+  background:#e2e8f0;
+  color:#0f172a;
+}
+button.secondary:hover{
+  background:#cbd5e1;
+}
+.filters-row{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top:16px;
+}
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(5, minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+}
+.kpi{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  background:var(--surface);
+  min-height:118px;
+}
+.kpi.primary{background:linear-gradient(180deg,#f0f9ff,#ffffff)}
+.kpi.good{background:linear-gradient(180deg,#ecfdf5,#ffffff)}
+.kpi.warn{background:linear-gradient(180deg,#fff7ed,#ffffff)}
+.kpi .label{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.kpi .value{
+  font-size:1.35rem;
+  font-weight:800;
+  line-height:1.15;
+  margin-bottom:8px;
+}
+.kpi .sub{
+  font-size:.85rem;
+  color:var(--muted);
+}
+.legend-supplies{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:10px 0 14px;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.legend-item{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
 .complex-name{
   display:inline-flex;
   align-items:center;
   gap:8px;
 }
-
 .supply-icons{
   display:inline-flex;
   align-items:center;
   gap:4px;
   flex:0 0 auto;
 }
-
-.icon-electric{
-  color:#2563eb;
-}
-
-.icon-flame{
-  color:#dc2626;
-}
-
+.icon-electric{color:#2563eb;}
+.icon-flame{color:#dc2626;}
 .supply-icon{
   width:14px;
   height:14px;
   display:inline-block;
   flex:0 0 auto;
 }
-
-.legend-supplies{
-  display:flex;
-  gap:16px;
-  flex-wrap:wrap;
-  align-items:center;
-  margin:6px 0 14px;
-  color:var(--muted);
-  font-size:.92rem;
+.chart-box{
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
 }
-
-.legend-item{
+#rankingChart, #portfolioChart, #detailChart{
+  width:100%;
+  min-height:440px;
+}
+.table-shell{
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+  margin-top:14px;
+}
+.table-wrap{
+  overflow:auto;
+  max-height:480px;
+}
+#rankingTable{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  min-width:1220px;
+}
+#rankingTable th,
+#rankingTable td{
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+  font-size:.93rem;
+  background:#fff;
+}
+#rankingTable thead th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:#f8fafc;
+  text-align:left;
+}
+#rankingTable td.num,
+#rankingTable th.num{
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+.rank-good{background:#f0fdf4 !important;}
+.rank-bad{background:#fef2f2 !important;}
+.badge{
   display:inline-flex;
   align-items:center;
-  gap:8px;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.8rem;
+  font-weight:700;
 }
-
-@media (max-width: 640px){
-  .section{
-    padding:18px 12px 28px;
-  }
-
-  .card{
-    padding:18px;
-  }
-
-  .controls{
-    flex-direction:column;
-    align-items:stretch;
-  }
-
-  select, button{
-    width:100%;
-    min-width:0;
-  }
-
-  #chart{
-    min-height:460px;
-  }
-
-  #rankingChart{
-    min-height:460px;
-  }
-
-  .filters{
-    padding:12px;
-    gap:10px 14px;
-  }
+.badge.good{background:#ecfdf5;color:#166534;}
+.badge.bad{background:#fef2f2;color:#991b1b;}
+.badge.neutral{background:#eff6ff;color:#1d4ed8;}
+.delta-up{color:var(--bad); font-weight:700;}
+.delta-down{color:var(--good); font-weight:700;}
+.delta-neutral{color:var(--muted); font-weight:700;}
+.hidden{display:none !important;}
+.dashboard-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+.dashboard-head h2{
+  margin:0 0 6px;
+  font-size:1.3rem;
+}
+.dashboard-head p{
+  margin:0;
+  color:var(--muted);
+}
+.series-filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 16px;
+  margin:0 0 16px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff;
+}
+.series-filters label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+.series-filters input{
+  width:16px;
+  height:16px;
+}
+.footer{
+  margin-top:28px;
+  padding:18px 20px;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  font-size:.88rem;
+  text-align:center;
+  line-height:1.5;
+}
+@media (max-width: 1100px){
+  .top-layout,.second-layout{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:repeat(2, minmax(0,1fr));}
+}
+@media (max-width: 700px){
+  main{padding:18px 12px 28px;}
+  .card{padding:16px;}
+  .filters-row{flex-direction:column;align-items:stretch;}
+  select,button{width:100%;min-width:0;}
+  .kpi-grid{grid-template-columns:1fr;}
+  #rankingChart, #portfolioChart, #detailChart{min-height:380px;}
+  .footer{font-size:.8rem;padding:16px 12px;}
 }
 </style>
 </head>
-
 <body>
 
 <header class="header">
-  <img src="logo_ona.jpg" alt="Logo Ona" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
-  <div id="logoFallback" class="logo-fallback" aria-hidden="true">O</div>
-  <div class="title-wrap">
-    <div class="title">Ona Energy Dashboard 2026</div>
-    <div class="subtitle">Consumo, ocupación, ratios, grados día y ranking</div>
+  <div class="header-left">
+    <img src="logo_ona.jpg" alt="Logo Ona" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
+    <div id="logoFallback" class="logo-fallback" aria-hidden="true">O</div>
+    <div class="header-title">
+      <h1>Ona Energy Dashboard 2026</h1>
+      <p>Benchmark ejecutivo portfolio · energía, ocupación, clima y ranking</p>
+    </div>
   </div>
+  <div class="header-badge">Portfolio benchmarking</div>
 </header>
 
 <main>
-  <section id="inicio" class="section">
-    <div class="container">
-      <div class="card" style="margin-bottom:18px;">
-        <h2>Selecciona complejo</h2>
-        <p>Escoge un complejo para visualizar consumo, RN, PAX, ratios energéticos y variables climáticas.</p>
+  <div class="container">
 
-        <div class="controls">
-          <label for="selector" style="position:absolute;left:-9999px;">Selecciona complejo</label>
-          <select id="selector"></select>
-          <button type="button" onclick="verDashboard()">Ver datos</button>
+    <section id="homeView" class="grid">
+      <div class="top-layout">
+        <div class="card">
+          <h2>Resumen ejecutivo</h2>
+          <p>Vista de portfolio con indicadores agregados, benchmark contra media y ranking operativo.</p>
+
+          <div class="filters-row">
+            <select id="selectorComplejo">
+              <option value="">-- Selecciona un complejo para detalle --</option>
+            </select>
+            <button type="button" onclick="openDetail()">Ver detalle complejo</button>
+          </div>
+
+          <div class="kpi-grid" id="executiveKpis"></div>
+        </div>
+
+        <div class="card">
+          <h2>Distribución de portfolio</h2>
+          <div class="filters-row">
+            <select id="portfolioMetric" onchange="renderPortfolioSection()">
+              <option value="kwh_rn">Distribución por kWh/RN</option>
+              <option value="kwh_pax">Distribución por kWh/PAX</option>
+              <option value="kwh_cdd">Distribución por kWh/CDD</option>
+              <option value="kwh_hdd">Distribución por kWh/HDD</option>
+              <option value="kwh_dd">Distribución por kWh/(CDD+HDD)</option>
+            </select>
+
+            <select id="portfolioSupplyFilter" onchange="renderPortfolioSection()">
+              <option value="ALL">Todos los suministros</option>
+              <option value="ELECTRICO">Solo eléctrico</option>
+              <option value="ELECTRICO_GAS">Eléctrico + gas/gasoil</option>
+            </select>
+          </div>
+
+          <div class="chart-box">
+            <div id="portfolioChart"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="second-layout">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+            <div>
+              <h2>Ranking benchmark</h2>
+            </div>
+            <div id="rankingSummary"></div>
+          </div>
+
+          <div class="chart-box">
+            <div id="rankingChart"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Filtros de benchmark</h2>
+
+          <div class="filters-row">
+            <select id="rankingMetric" onchange="renderRankingSection()">
+              <option value="kwh_rn">Ranking por kWh/RN</option>
+              <option value="kwh_pax">Ranking por kWh/PAX</option>
+              <option value="kwh_cdd">Ranking por kWh/CDD</option>
+              <option value="kwh_hdd">Ranking por kWh/HDD</option>
+              <option value="kwh_dd">Ranking por kWh/(CDD+HDD)</option>
+            </select>
+
+            <select id="rankingSupplyFilter" onchange="renderRankingSection()">
+              <option value="ALL">Todos los suministros</option>
+              <option value="ELECTRICO">Solo eléctrico</option>
+              <option value="ELECTRICO_GAS">Eléctrico + gas/gasoil</option>
+            </select>
+
+            <select id="sortMode" onchange="renderRankingSection()">
+              <option value="best">Mostrar mejores primero</option>
+              <option value="worst">Mostrar peores primero</option>
+            </select>
+          </div>
+
+          <div class="legend-supplies" aria-label="Leyenda de suministros">
+            <span class="legend-item">
+              <span class="supply-icons" aria-hidden="true">
+                <span class="supply-icon icon-electric">
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641z"/>
+                  </svg>
+                </span>
+              </span>
+              <span>Eléctrico</span>
+            </span>
+
+            <span class="legend-item">
+              <span class="supply-icons" aria-hidden="true">
+                <span class="supply-icon icon-electric">
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641z"/>
+                  </svg>
+                </span>
+                <span class="supply-icon icon-flame">
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 0c.153 2.234-1.314 3.51-2.617 4.792C4.21 5.95 3.2 6.945 3.2 8.5A4.8 4.8 0 0 0 8 13.3a4.8 4.8 0 0 0 4.8-4.8c0-1.539-.682-2.594-1.69-3.766-.996-1.159-2.17-2.36-2.01-4.734A.55.55 0 0 0 8 0Zm.286 6.357c.195 1.319-.637 1.974-1.39 2.676C6.268 9.62 5.7 10.15 5.7 11a2.3 2.3 0 1 0 4.6 0c0-.896-.49-1.345-1.053-1.846-.61-.543-1.297-1.155-.961-2.797Z"/>
+                  </svg>
+                </span>
+              </span>
+              <span>Eléctrico + gas/gasoil</span>
+            </span>
+          </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="topbar" style="margin-bottom:12px;">
+        <h2>Tabla de benchmarking</h2>
+
+        <div class="filters-row">
+          <select id="tableMetric" onchange="renderTableSection()">
+            <option value="kwh_rn">Tabla por kWh/RN</option>
+            <option value="kwh_pax">Tabla por kWh/PAX</option>
+            <option value="kwh_cdd">Tabla por kWh/CDD</option>
+            <option value="kwh_hdd">Tabla por kWh/HDD</option>
+            <option value="kwh_dd">Tabla por kWh/(CDD+HDD)</option>
+          </select>
+
+          <select id="tableSupplyFilter" onchange="renderTableSection()">
+            <option value="ALL">Todos los suministros</option>
+            <option value="ELECTRICO">Solo eléctrico</option>
+            <option value="ELECTRICO_GAS">Eléctrico + gas/gasoil</option>
+          </select>
+        </div>
+
+        <div class="table-shell">
+          <div class="table-wrap">
+            <table id="rankingTable" tabindex="0">
+              <thead>
+                <tr>
+                  <th>Pos.</th>
+                  <th>Complejo</th>
+                  <th>Estación</th>
+                  <th class="num">Consumo</th>
+                  <th class="num">kWh/RN</th>
+                  <th class="num">kWh/PAX</th>
+                  <th class="num">kWh/CDD</th>
+                  <th class="num">kWh/HDD</th>
+                  <th class="num">kWh/(CDD+HDD)</th>
+                  <th class="num">Vs media</th>
+                  <th>Clasificación</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="detailView" class="hidden">
+      <div class="card">
+        <div class="dashboard-head">
           <div>
-            <h2 style="margin:0;">Ranking de complejos</h2>
-            <p style="margin:4px 0 0;color:var(--muted);">
-              Comparativa de mejores y peores complejos según el indicador seleccionado.
-            </p>
+            <h2 id="detailTitle">Detalle de complejo</h2>
+            <p id="detailSubtitle">Consumo, ocupación, clima y ratios del complejo seleccionado.</p>
           </div>
-
-          <div class="controls">
-            <label for="rankingMetric" style="font-weight:600;">Ordenar por</label>
-            <select id="rankingMetric" onchange="renderRanking()" style="min-width:220px;">
-              <option value="kwh_rn">kWh/RN</option>
-              <option value="kwh_pax">kWh/PAX</option>
-              <option value="kwh_cdd">kWh/CDD</option>
-              <option value="kwh_hdd">kWh/HDD</option>
-              <option value="kwh_dd">kWh/(CDD+HDD)</option>
-            </select>
-          </div>
+          <button type="button" class="secondary" onclick="goHome()">← Volver al benchmark</button>
         </div>
 
-        <div class="legend-supplies" aria-label="Leyenda de suministros">
-          <span class="legend-item">
-            <span class="supply-icons" aria-hidden="true">
-              <span class="supply-icon icon-electric">
-                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641z"/>
-                </svg>
-              </span>
-            </span>
-            <span>Eléctrico</span>
-          </span>
+        <div class="kpi-grid" id="detailKpis"></div>
 
-          <span class="legend-item">
-            <span class="supply-icons" aria-hidden="true">
-              <span class="supply-icon icon-electric">
-                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641z"/>
-                </svg>
-              </span>
-              <span class="supply-icon icon-flame">
-                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 0c.153 2.234-1.314 3.51-2.617 4.792C4.21 5.95 3.2 6.945 3.2 8.5A4.8 4.8 0 0 0 8 13.3a4.8 4.8 0 0 0 4.8-4.8c0-1.539-.682-2.594-1.69-3.766-.996-1.159-2.17-2.36-2.01-4.734A.55.55 0 0 0 8 0Zm.286 6.357c.195 1.319-.637 1.974-1.39 2.676C6.268 9.62 5.7 10.15 5.7 11a2.3 2.3 0 1 0 4.6 0c0-.896-.49-1.345-1.053-1.846-.61-.543-1.297-1.155-.961-2.797Z"/>
-                </svg>
-              </span>
-            </span>
-            <span>Eléctrico + gas/gasoil</span>
-          </span>
+        <div class="series-filters">
+          <label><input type="checkbox" id="cons" checked> Consumo</label>
+          <label><input type="checkbox" id="rn" checked> RN</label>
+          <label><input type="checkbox" id="pax" checked> PAX</label>
+          <label><input type="checkbox" id="cer" checked> kWh/RN</label>
+          <label><input type="checkbox" id="cep" checked> kWh/PAX</label>
+          <label><input type="checkbox" id="cdd" checked> CDD</label>
+          <label><input type="checkbox" id="hdd" checked> HDD</label>
         </div>
 
-        <div class="chart-card" style="margin-bottom:16px;">
-          <div id="rankingChart"></div>
-        </div>
-
-        <div class="table-wrap">
-          <table id="rankingTable">
-            <thead>
-              <tr>
-                <th style="text-align:left;">Pos.</th>
-                <th style="text-align:left;">Complejo</th>
-                <th style="text-align:left;">Estación</th>
-                <th style="text-align:right;">Consumo</th>
-                <th style="text-align:right;">kWh/RN</th>
-                <th style="text-align:right;">kWh/PAX</th>
-                <th style="text-align:right;">kWh/CDD</th>
-                <th style="text-align:right;">kWh/HDD</th>
-                <th style="text-align:right;">kWh/(CDD+HDD)</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+        <div class="chart-box">
+          <div id="detailChart"></div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="dashboard" class="section hidden">
-    <div class="container">
+    <footer class="footer">
+      Ona Hotels · Herramientas de Eficiencia Energética Desarrollado por E.Andreu | Departamento de transición energética v1.0.0 | Junio 2026
+    </footer>
 
-      <div class="topbar">
-        <div>
-          <h2 id="titulo">Dashboard</h2>
-          <p id="subtitulo">Análisis mensual del complejo seleccionado.</p>
-        </div>
-        <button type="button" class="secondary" onclick="volver()">← Volver</button>
-      </div>
-
-      <div id="kpis" class="kpis"></div>
-
-      <div class="filters" aria-label="Filtros de series">
-        <strong>Series visibles:</strong>
-        <label><input type="checkbox" id="cons" checked> Consumo</label>
-        <label><input type="checkbox" id="rn" checked> RN</label>
-        <label><input type="checkbox" id="pax" checked> PAX</label>
-        <label><input type="checkbox" id="cer" checked> kWh/RN</label>
-        <label><input type="checkbox" id="cep" checked> kWh/PAX</label>
-        <label><input type="checkbox" id="cdd" checked> CDD</label>
-        <label><input type="checkbox" id="hdd" checked> HDD</label>
-      </div>
-
-      <div class="chart-card">
-        <div id="chart"></div>
-      </div>
-
-      <div class="help">
-        Ejes: izquierda para consumo, derecha para RN/PAX, segundo eje derecho para ratios y tercer eje derecho para CDD/HDD.
-      </div>
-
-    </div>
-  </section>
+  </div>
 </main>
 
 <script>
@@ -551,38 +591,23 @@ const COMPLEJO_ESTACION = {
   "ONA PALAMÓS": "LEGE",
   "ONA LIVING BARCELONA": "LEBL",
   "ONA MOSAIC": "LEBL",
-  "ONA CALA PI": "LEPA",
-  "ONA AUCANADA": "LEPA",
-  "ONA JARDINES PARAISOL": "LERS",
-  "ONA OGISAKA GARDEN": "LEAL",
-  "ONA SUITES SALOU (antes NOVELTY)": "LERS",
-  "ONA LAS ZARZAS": "LEAL",
-  "ONA ALANDA CLUB MARBELLA": "LEMG",
-  "BAHÍA BLANCA": "GCLP",
-  "BEVERLY HILLS HEIGHTS (EXCEL)": "GCTS",
-  "BEVERLY HILLS SUITES (EXCEL)": "GCTS",
-  "HOLLYWOOD MIRAGE (EXCEL)": "GCTS",
-  "PALM BEACH (EXCEL)": "GCTS",
-  "ONA GARDEN LAGO": "LEPA",
-  "ONA AQUAMARINA": "LERS",
-  "ONA VILLAGE CALA D'OR": "LEPA",
   "Hotel Ritual": "LEMG",
   "ONA DIANA PARK": "LEMG",
   "ONA MARBELLA INN": "LEMG",
   "Be Live OROTAVA": "GCXO",
-  "ONA MAR MENOR": "LELC"
+  "PALM BEACH (EXCEL)": "GCTS",
+  "BEVERLY HILLS HEIGHTS (EXCEL)": "GCTS",
+  "BEVERLY HILLS SUITES (EXCEL)": "GCTS",
+  "HOLLYWOOD MIRAGE (EXCEL)": "GCTS",
+  "ONA VILLAGE CALA D'OR": "LEPA"
 };
 
 const WEATHER = {
-  "LELC": { cdd: [1.9, 12.4, 2.2, 35.5, 102.8], hdd: [96.9, 55.3, 63.1, 20.6, 3.3] },
   "GCXO": { cdd: [0, 12.6, 0, 10.0, 18.5], hdd: [65.6, 39.8, 70.6, 37.0, 18.4] },
   "LEMG": { cdd: [1.2, 4.8, 3.3, 25.2, 76.9], hdd: [106.3, 73.2, 68.2, 22.6, 4.0] },
   "LEPA": { cdd: [0, 3.7, 0.2, 36.1, 78.8], hdd: [120.9, 60.1, 89.5, 58.6, 10.4] },
   "LEGE": { cdd: [0, 2.3, 1.4, 31.0, 54.4], hdd: [235.8, 147.5, 149.6, 79.6, 42.4] },
   "LEBL": { cdd: [0, 1.8, 0.1, 13.2, 66.6], hdd: [161.8, 81.5, 75.7, 23.3, 4.4] },
-  "LERS": { cdd: [0, 2.9, 2.1, 30.3, 72.5], hdd: [171.6, 98.6, 98.6, 47.2, 11.0] },
-  "LEAL": { cdd: [2.2, 16.9, 4.3, 43.8, 113.4], hdd: [84.2, 47.9, 53.3, 16.7, 1.3] },
-  "GCLP": { cdd: [23.7, 33.5, 26.1, 49.5, 80.1], hdd: [0.6, 0, 0.5, 0, 0] },
   "GCTS": { cdd: [25.2, 49.2, 29.9, 61.7, 81.8], hdd: [1.1, 0.2, 0.3, 0, 0] }
 };
 
@@ -607,443 +632,361 @@ const SUMINISTROS = {
   "PALM BEACH (EXCEL)": "ELECTRICO_GAS"
 };
 
-const selector = document.getElementById("selector");
-const chartEl = document.getElementById("chart");
-
 const formatInt = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 });
-const formatDec = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
 
-function llenarSelector(){
-  selector.innerHTML = '<option value="">-- Selecciona un complejo --</option>';
-  Object.keys(DATA).sort((a,b)=>a.localeCompare(b,"es")).forEach(c=>{
-    const op = document.createElement("option");
-    op.value = c;
-    op.textContent = c;
-    selector.appendChild(op);
-  });
+function safeDivide(a,b){ return b && b !== 0 ? a / b : null; }
+function sumValid(arr){ const v = arr.filter(x => x !== null && Number.isFinite(x)); return v.length ? v.reduce((a,b)=>a+b,0) : null; }
+function fmt(v,dec=2){ return v === null || !Number.isFinite(v) ? "N/D" : new Intl.NumberFormat("es-ES",{minimumFractionDigits:dec,maximumFractionDigits:dec}).format(v); }
+function pctDelta(value,mean){
+  if(value === null || mean === null || !mean) return null;
+  return ((value / mean) - 1) * 100;
 }
-
-function safeDivide(a,b){
-  return b && b !== 0 ? a / b : null;
+function deltaHtml(value){
+  if(value === null) return `<span class="delta-neutral">N/D</span>`;
+  const sign = value > 0 ? "+" : "";
+  const cls = value > 2 ? "delta-up" : (value < -2 ? "delta-down" : "delta-neutral");
+  return `<span class="${cls}">${sign}${fmt(value,1)}%</span>`;
 }
-
-function avg(arr){
-  const valid = arr.filter(v => v !== null && Number.isFinite(v));
-  return valid.length ? valid.reduce((a,b)=>a+b,0) / valid.length : null;
-}
-
-function sumValid(arr){
-  const valid = arr.filter(v => v !== null && Number.isFinite(v));
-  return valid.length ? valid.reduce((a,b)=>a+b,0) : null;
-}
-
-function getVisibleState(id){
-  return document.getElementById(id).checked ? true : "legendonly";
-}
-
 function metricLabel(metric){
-  const labels = {
-    kwh_rn: "kWh/RN",
-    kwh_pax: "kWh/PAX",
-    kwh_cdd: "kWh/CDD",
-    kwh_hdd: "kWh/HDD",
-    kwh_dd: "kWh/(CDD+HDD)"
-  };
-  return labels[metric] || metric;
+  return {
+    kwh_rn:"kWh/RN",
+    kwh_pax:"kWh/PAX",
+    kwh_cdd:"kWh/CDD",
+    kwh_hdd:"kWh/HDD",
+    kwh_dd:"kWh/(CDD+HDD)"
+  }[metric] || metric;
 }
-
 function getSupplyIcon(tipo){
   const bolt = `
     <span class="supply-icon icon-electric" aria-hidden="true">
       <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641z"/>
       </svg>
-    </span>
-  `;
-
+    </span>`;
   const flame = `
     <span class="supply-icon icon-flame" aria-hidden="true">
       <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path d="M8 0c.153 2.234-1.314 3.51-2.617 4.792C4.21 5.95 3.2 6.945 3.2 8.5A4.8 4.8 0 0 0 8 13.3a4.8 4.8 0 0 0 4.8-4.8c0-1.539-.682-2.594-1.69-3.766-.996-1.159-2.17-2.36-2.01-4.734A.55.55 0 0 0 8 0Zm.286 6.357c.195 1.319-.637 1.974-1.39 2.676C6.268 9.62 5.7 10.15 5.7 11a2.3 2.3 0 1 0 4.6 0c0-.896-.49-1.345-1.053-1.846-.61-.543-1.297-1.155-.961-2.797Z"/>
       </svg>
-    </span>
-  `;
-
-  if (tipo === "ELECTRICO_GAS" || tipo === "ELECTRICO + GAS/GASOIL") {
-    return `<span class="supply-icons" title="Electricidad + gas/gasoil">${bolt}${flame}</span>`;
-  }
-
-  return `<span class="supply-icons" title="Electricidad">${bolt}</span>`;
+    </span>`;
+  return tipo === "ELECTRICO_GAS"
+    ? `<span class="supply-icons" title="Electricidad + gas/gasoil">${bolt}${flame}</span>`
+    : `<span class="supply-icons" title="Electricidad">${bolt}</span>`;
 }
-
 function getComplexMetrics(name){
   const d = DATA[name];
-  if(!d) return null;
+  const estacion = COMPLEJO_ESTACION[name] || "N/D";
+  const weather = WEATHER[estacion] || { cdd:[null,null,null,null,null], hdd:[null,null,null,null,null] };
+  const consumo = sumValid(d.cons);
+  const rn = sumValid(d.rn);
+  const pax = sumValid(d.pax);
+  const cdd = sumValid(weather.cdd);
+  const hdd = sumValid(weather.hdd);
+  const dd = ((cdd || 0) + (hdd || 0)) || null;
 
-  const estacion = COMPLEJO_ESTACION[name] || null;
-  const weather = estacion && WEATHER[estacion]
-    ? WEATHER[estacion]
-    : { cdd:[null,null,null,null,null], hdd:[null,null,null,null,null] };
+  return {
+    complejo:name,
+    suministro:SUMINISTROS[name] || "ELECTRICO",
+    estacion,
+    consumo,
+    rn,
+    pax,
+    cdd,
+    hdd,
+    kwh_rn:safeDivide(consumo,rn),
+    kwh_pax:safeDivide(consumo,pax),
+    kwh_cdd:safeDivide(consumo,cdd),
+    kwh_hdd:safeDivide(consumo,hdd),
+    kwh_dd:safeDivide(consumo,dd)
+  };
+}
+function getRowsBySupply(supply){
+  let rows = Object.keys(DATA).map(getComplexMetrics);
+  if(supply !== "ALL"){
+    rows = rows.filter(r => r.suministro === supply);
+  }
+  return rows;
+}
+function getMetricMean(rows, metric){
+  const vals = rows.map(r => r[metric]).filter(v => v !== null && Number.isFinite(v));
+  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+}
+function classifyDelta(delta){
+  if(delta === null) return {label:"Sin dato", cls:"neutral"};
+  if(delta <= -10) return {label:"Muy eficiente", cls:"good"};
+  if(delta < 5) return {label:"En línea", cls:"neutral"};
+  return {label:"A revisar", cls:"bad"};
+}
+function fillSelector(){
+  const sel = document.getElementById("selectorComplejo");
+  sel.innerHTML = '<option value="">-- Selecciona un complejo para detalle --</option>';
+  Object.keys(DATA).sort((a,b)=>a.localeCompare(b,"es")).forEach(name=>{
+    const op = document.createElement("option");
+    op.value = name;
+    op.textContent = name;
+    sel.appendChild(op);
+  });
+}
+function renderExecutiveKpis(){
+  const rows = Object.keys(DATA).map(getComplexMetrics);
+  const totalCons = sumValid(rows.map(r=>r.consumo));
+  const meanRn = getMetricMean(rows, "kwh_rn");
+  const meanPax = getMetricMean(rows, "kwh_pax");
+  const meanDD = getMetricMean(rows, "kwh_dd");
+  const count = rows.length;
+
+  document.getElementById("executiveKpis").innerHTML = `
+    <div class="kpi primary">
+      <div class="label">Consumo portfolio</div>
+      <div class="value">${totalCons !== null ? formatInt.format(totalCons) : "N/D"} kWh</div>
+      <div class="sub">${count} complejos en benchmark</div>
+    </div>
+    <div class="kpi good">
+      <div class="label">Media portfolio · kWh/RN</div>
+      <div class="value">${fmt(meanRn,2)}</div>
+      <div class="sub">Ratio operativo principal</div>
+    </div>
+    <div class="kpi good">
+      <div class="label">Media portfolio · kWh/PAX</div>
+      <div class="value">${fmt(meanPax,2)}</div>
+      <div class="sub">Comparación por ocupación</div>
+    </div>
+    <div class="kpi warn">
+      <div class="label">Media portfolio · kWh/(CDD+HDD)</div>
+      <div class="value">${fmt(meanDD,2)}</div>
+      <div class="sub">Normalización climática</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Complejos analizados</div>
+      <div class="value">${count}</div>
+      <div class="sub">Universo completo portfolio</div>
+    </div>
+  `;
+}
+function renderRankingSection(){
+  const metric = document.getElementById("rankingMetric").value;
+  const supply = document.getElementById("rankingSupplyFilter").value;
+  const sortMode = document.getElementById("sortMode").value;
+  const rows = getRowsBySupply(supply).filter(r => r[metric] !== null && Number.isFinite(r[metric]));
+  const mean = getMetricMean(rows, metric);
+
+  let sorted = [...rows].sort((a,b)=>a[metric]-b[metric]);
+  if(sortMode === "worst") sorted = [...rows].sort((a,b)=>b[metric]-a[metric]);
+  const shown = sorted.slice(0, 8);
+
+  document.getElementById("rankingSummary").innerHTML = `<span class="badge neutral">Media selección: ${fmt(mean,2)}</span>`;
+
+  const colors = shown.map(r => {
+    const d = pctDelta(r[metric], mean);
+    if(d === null) return "#94a3b8";
+    if(d <= -10) return "#16a34a";
+    if(d < 5) return "#2563eb";
+    return "#dc2626";
+  });
+
+  Plotly.newPlot("rankingChart", [{
+    type:"bar",
+    orientation:"h",
+    x:shown.map(r=>r[metric]).reverse(),
+    y:shown.map(r=>r.complejo).reverse(),
+    marker:{color:colors.reverse()},
+    text:shown.map(r=>fmt(r[metric],2)).reverse(),
+    textposition:"outside",
+    cliponaxis:false,
+    hovertemplate:"%{y}<br>" + metricLabel(metric) + ": %{x:.2f}<extra></extra>"
+  }], {
+    margin:{l:220,r:40,t:20,b:45},
+    paper_bgcolor:"#ffffff",
+    plot_bgcolor:"#ffffff",
+    xaxis:{title:metricLabel(metric), gridcolor:"#eef2f7"},
+    yaxis:{automargin:true},
+    shapes: mean !== null ? [{
+      type:"line", x0:mean, x1:mean, y0:-0.5, y1:shown.length-0.5,
+      line:{color:"#0f172a", width:2, dash:"dash"}
+    }] : []
+  }, {responsive:true, displaylogo:false});
+}
+function renderPortfolioSection(){
+  const metric = document.getElementById("portfolioMetric").value;
+  const supply = document.getElementById("portfolioSupplyFilter").value;
+  const rows = getRowsBySupply(supply).filter(r => r[metric] !== null && Number.isFinite(r[metric]));
+  const mean = getMetricMean(rows, metric);
+
+  Plotly.newPlot("portfolioChart", [{
+    type:"scatter",
+    mode:"markers+text",
+    x:rows.map((_,i)=>i+1),
+    y:rows.map(r=>r[metric]),
+    text:rows.map(r=>r.complejo),
+    textposition:"top center",
+    textfont:{size:9, color:"#475569"},
+    marker:{
+      size:9,
+      color:rows.map(r => r.suministro === "ELECTRICO_GAS" ? "#dc2626" : "#2563eb")
+    },
+    hovertemplate:"%{text}<br>" + metricLabel(metric) + ": %{y:.2f}<extra></extra>"
+  }], {
+    margin:{l:55,r:20,t:20,b:40},
+    paper_bgcolor:"#ffffff",
+    plot_bgcolor:"#ffffff",
+    xaxis:{title:"Complejos", showticklabels:false, gridcolor:"#eef2f7"},
+    yaxis:{title:metricLabel(metric), gridcolor:"#eef2f7"},
+    shapes: mean !== null ? [{
+      type:"line", x0:1, x1:rows.length, y0:mean, y1:mean,
+      line:{color:"#0f172a", width:2, dash:"dot"}
+    }] : []
+  }, {responsive:true, displaylogo:false});
+}
+function renderTableSection(){
+  const metric = document.getElementById("tableMetric").value;
+  const supply = document.getElementById("tableSupplyFilter").value;
+  const rows = getRowsBySupply(supply);
+  const mean = getMetricMean(rows, metric);
+
+  const sorted = [...rows]
+    .filter(r => r[metric] !== null && Number.isFinite(r[metric]))
+    .sort((a,b)=>a[metric]-b[metric]);
+
+  const tbody = document.querySelector("#rankingTable tbody");
+  tbody.innerHTML = sorted.map((r, idx) => {
+    const delta = pctDelta(r[metric], mean);
+    const clsInfo = classifyDelta(delta);
+    const rowClass = idx < 5 ? "rank-good" : (idx >= sorted.length - 5 ? "rank-bad" : "");
+    return `
+      <tr>
+        <td class="${rowClass}">${idx+1}</td>
+        <td class="${rowClass}">
+          <span class="complex-name">
+            ${getSupplyIcon(r.suministro)}
+            <span>${r.complejo}</span>
+          </span>
+        </td>
+        <td class="${rowClass}">${r.estacion}</td>
+        <td class="num ${rowClass}">${r.consumo !== null ? formatInt.format(r.consumo) : "N/D"}</td>
+        <td class="num ${rowClass}">${fmt(r.kwh_rn,2)}</td>
+        <td class="num ${rowClass}">${fmt(r.kwh_pax,2)}</td>
+        <td class="num ${rowClass}">${fmt(r.kwh_cdd,2)}</td>
+        <td class="num ${rowClass}">${fmt(r.kwh_hdd,2)}</td>
+        <td class="num ${rowClass}">${fmt(r.kwh_dd,2)}</td>
+        <td class="num ${rowClass}">${deltaHtml(delta)}</td>
+        <td class="${rowClass}"><span class="badge ${clsInfo.cls}">${clsInfo.label}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+function openDetail(){
+  const name = document.getElementById("selectorComplejo").value;
+  if(!name){
+    alert("Selecciona un complejo antes de continuar.");
+    return;
+  }
+  document.getElementById("homeView").classList.add("hidden");
+  document.getElementById("detailView").classList.remove("hidden");
+  renderDetail(name);
+}
+function goHome(){
+  document.getElementById("detailView").classList.add("hidden");
+  document.getElementById("homeView").classList.remove("hidden");
+  renderRankingSection();
+  renderPortfolioSection();
+  renderTableSection();
+}
+function getVisibleState(id){
+  return document.getElementById(id).checked ? true : "legendonly";
+}
+function renderDetail(name){
+  const d = DATA[name];
+  const estacion = COMPLEJO_ESTACION[name] || "N/D";
+  const weather = WEATHER[estacion] || { cdd:[null,null,null,null,null], hdd:[null,null,null,null,null] };
 
   const totalCons = sumValid(d.cons);
   const totalRn = sumValid(d.rn);
   const totalPax = sumValid(d.pax);
   const totalCDD = sumValid(weather.cdd);
   const totalHDD = sumValid(weather.hdd);
-  const totalDD = ((totalCDD || 0) + (totalHDD || 0)) || null;
-
-  return {
-    complejo: name,
-    estacion: estacion || "N/D",
-    consumo: totalCons,
-    kwh_rn: safeDivide(totalCons, totalRn),
-    kwh_pax: safeDivide(totalCons, totalPax),
-    kwh_cdd: safeDivide(totalCons, totalCDD),
-    kwh_hdd: safeDivide(totalCons, totalHDD),
-    kwh_dd: safeDivide(totalCons, totalDD)
-  };
-}
-
-function renderRanking(){
-  const rankingMetricEl = document.getElementById("rankingMetric");
-  if(!rankingMetricEl) return;
-
-  const metric = rankingMetricEl.value || "kwh_rn";
-
-  const rows = Object.keys(DATA)
-    .map(getComplexMetrics)
-    .filter(r => r && r[metric] !== null && Number.isFinite(r[metric]))
-    .sort((a,b) => a[metric] - b[metric]);
-
-  const tbody = document.querySelector("#rankingTable tbody");
-  if(tbody){
-    tbody.innerHTML = rows.map((r, idx) => {
-      const cls = idx < 5 ? "rank-good" : (idx >= rows.length - 5 ? "rank-bad" : "");
-      return `
-        <tr class="${cls}">
-          <td>${idx + 1}</td>
-          <td>
-            <span class="complex-name">
-              ${getSupplyIcon(SUMINISTROS[r.complejo] || "ELECTRICO")}
-              <span>${r.complejo}</span>
-            </span>
-          </td>
-          <td>${r.estacion}</td>
-          <td style="text-align:right;">${r.consumo !== null ? formatInt.format(r.consumo) : "N/D"}</td>
-          <td style="text-align:right;">${r.kwh_rn !== null ? formatDec.format(r.kwh_rn) : "N/D"}</td>
-          <td style="text-align:right;">${r.kwh_pax !== null ? formatDec.format(r.kwh_pax) : "N/D"}</td>
-          <td style="text-align:right;">${r.kwh_cdd !== null ? formatDec.format(r.kwh_cdd) : "N/D"}</td>
-          <td style="text-align:right;">${r.kwh_hdd !== null ? formatDec.format(r.kwh_hdd) : "N/D"}</td>
-          <td style="text-align:right;">${r.kwh_dd !== null ? formatDec.format(r.kwh_dd) : "N/D"}</td>
-        </tr>
-      `;
-    }).join("");
-  }
-
-  const top = rows.slice(0, 5).reverse();
-  const bottom = rows.slice(-5);
-
-  const chartData = [
-    {
-      type: "bar",
-      orientation: "h",
-      name: "Mejores",
-      x: top.map(r => r[metric]),
-      y: top.map(r => r.complejo),
-      marker: { color: "#16a34a" },
-      hovertemplate: "%{y}<br>" + metricLabel(metric) + ": %{x:.2f}<extra></extra>"
-    },
-    {
-      type: "bar",
-      orientation: "h",
-      name: "Peores",
-      x: bottom.map(r => r[metric]),
-      y: bottom.map(r => r.complejo),
-      marker: { color: "#dc2626" },
-      hovertemplate: "%{y}<br>" + metricLabel(metric) + ": %{x:.2f}<extra></extra>"
-    }
-  ];
-
-  const layout = {
-    title: { text: "Mejores y peores complejos por " + metricLabel(metric) },
-    barmode: "group",
-    paper_bgcolor: "#ffffff",
-    plot_bgcolor: "#ffffff",
-    margin: { l: 220, r: 20, t: 50, b: 40 },
-    xaxis: { title: metricLabel(metric), gridcolor: "#eef2f7" },
-    yaxis: { automargin: true },
-    legend: { orientation: "h", y: 1.12 }
-  };
-
-  Plotly.newPlot("rankingChart", chartData, layout, {
-    responsive: true,
-    displaylogo: false,
-    modeBarButtonsToRemove: ["select2d", "lasso2d"]
-  });
-}
-
-function verDashboard(){
-  if(!selector.value){
-    alert("Selecciona un complejo antes de continuar.");
-    return;
-  }
-
-  document.getElementById("inicio").classList.add("hidden");
-  document.getElementById("dashboard").classList.remove("hidden");
-  document.getElementById("titulo").textContent = selector.value;
-  pintar(selector.value);
-}
-
-function volver(){
-  document.getElementById("inicio").classList.remove("hidden");
-  document.getElementById("dashboard").classList.add("hidden");
-  renderRanking();
-}
-
-function pintar(complejo){
-  const d = DATA[complejo];
-  if(!d) return;
-
-  const estacion = COMPLEJO_ESTACION[complejo] || null;
-  const weather = estacion && WEATHER[estacion]
-    ? WEATHER[estacion]
-    : { cdd:[null,null,null,null,null], hdd:[null,null,null,null,null] };
 
   const ce_rn = d.cons.map((v,i)=>safeDivide(v,d.rn[i]));
   const ce_pax = d.cons.map((v,i)=>safeDivide(v,d.pax[i]));
 
-  const total = d.cons.reduce((a,b)=>a+b,0);
-  const totalRn = sumValid(d.rn);
-  const totalPax = sumValid(d.pax);
-  const totalCDD = sumValid(weather.cdd);
-  const totalHDD = sumValid(weather.hdd);
-  const totalDD = ((totalCDD || 0) + (totalHDD || 0)) || null;
+  document.getElementById("detailTitle").textContent = name;
+  document.getElementById("detailSubtitle").textContent =
+    `Estación ${estacion} · suministro ${SUMINISTROS[name] === "ELECTRICO_GAS" ? "eléctrico + gas/gasoil" : "eléctrico"}`;
 
-  const media_rn = avg(ce_rn);
-  const media_pax = avg(ce_pax);
-  const kwhCDD = safeDivide(total, totalCDD);
-  const kwhHDD = safeDivide(total, totalHDD);
-  const kwhDD = safeDivide(total, totalDD);
-
-  document.getElementById("subtitulo").textContent =
-    estacion
-      ? `Análisis mensual de enero a mayo · Estación meteorológica ${estacion}`
-      : "Análisis mensual de enero a mayo · Sin estación asociada";
-
-  document.getElementById("kpis").innerHTML = `
-    <div class="kpi">
+  document.getElementById("detailKpis").innerHTML = `
+    <div class="kpi primary">
       <div class="label">Consumo total</div>
-      <div class="value">${formatInt.format(total)} kWh</div>
+      <div class="value">${formatInt.format(totalCons)} kWh</div>
+      <div class="sub">Acumulado enero-mayo</div>
     </div>
     <div class="kpi good">
       <div class="label">RN acumulado</div>
-      <div class="value">${totalRn !== null ? formatInt.format(totalRn) : "N/D"}</div>
+      <div class="value">${formatInt.format(totalRn || 0)}</div>
+      <div class="sub">Demanda operativa</div>
     </div>
     <div class="kpi good">
       <div class="label">PAX acumulado</div>
-      <div class="value">${totalPax !== null ? formatInt.format(totalPax) : "N/D"}</div>
-    </div>
-    <div class="kpi good">
-      <div class="label">kWh/RN medio</div>
-      <div class="value">${media_rn !== null ? formatDec.format(media_rn) : "N/D"}</div>
-    </div>
-    <div class="kpi good">
-      <div class="label">kWh/PAX medio</div>
-      <div class="value">${media_pax !== null ? formatDec.format(media_pax) : "N/D"}</div>
-    </div>
-    <div class="kpi info">
-      <div class="label">CDD acumulado</div>
-      <div class="value">${totalCDD !== null ? formatDec.format(totalCDD) : "N/D"}</div>
+      <div class="value">${formatInt.format(totalPax || 0)}</div>
+      <div class="sub">Ocupación total</div>
     </div>
     <div class="kpi warn">
-      <div class="label">HDD acumulado</div>
-      <div class="value">${totalHDD !== null ? formatDec.format(totalHDD) : "N/D"}</div>
-    </div>
-    <div class="kpi info">
       <div class="label">kWh/CDD</div>
-      <div class="value">${kwhCDD !== null ? formatDec.format(kwhCDD) : "N/D"}</div>
+      <div class="value">${fmt(safeDivide(totalCons,totalCDD),2)}</div>
+      <div class="sub">Normalización refrigeración</div>
     </div>
     <div class="kpi warn">
       <div class="label">kWh/HDD</div>
-      <div class="value">${kwhHDD !== null ? formatDec.format(kwhHDD) : "N/D"}</div>
-    </div>
-    <div class="kpi">
-      <div class="label">kWh/(CDD+HDD)</div>
-      <div class="value">${kwhDD !== null ? formatDec.format(kwhDD) : "N/D"}</div>
+      <div class="value">${fmt(safeDivide(totalCons,totalHDD),2)}</div>
+      <div class="sub">Normalización calefacción</div>
     </div>
   `;
 
   const traces = [
-    {
-      x: meses,
-      y: d.cons,
-      type: "bar",
-      name: "Consumo",
-      yaxis: "y",
-      marker: { color: "#0ea5e9" },
-      hovertemplate: "%{x}<br>Consumo: %{y:,.0f} kWh<extra></extra>",
-      visible: getVisibleState("cons")
-    },
-    {
-      x: meses,
-      y: d.rn,
-      type: "scatter",
-      mode: "lines+markers",
-      name: "RN",
-      yaxis: "y2",
-      line: { color: "#0f172a", width: 3 },
-      marker: { size: 7 },
-      hovertemplate: "%{x}<br>RN: %{y:,.0f}<extra></extra>",
-      visible: getVisibleState("rn")
-    },
-    {
-      x: meses,
-      y: d.pax,
-      type: "scatter",
-      mode: "lines+markers",
-      name: "PAX",
-      yaxis: "y2",
-      line: { color: "#16a34a", width: 3 },
-      marker: { size: 7 },
-      hovertemplate: "%{x}<br>PAX: %{y:,.0f}<extra></extra>",
-      visible: getVisibleState("pax")
-    },
-    {
-      x: meses,
-      y: ce_rn,
-      type: "scatter",
-      mode: "lines+markers",
-      name: "kWh/RN",
-      yaxis: "y3",
-      line: { color: "#f97316", width: 3, dash: "dot" },
-      marker: { size: 7 },
-      connectgaps: false,
-      hovertemplate: "%{x}<br>kWh/RN: %{y:.2f}<extra></extra>",
-      visible: getVisibleState("cer")
-    },
-    {
-      x: meses,
-      y: ce_pax,
-      type: "scatter",
-      mode: "lines+markers",
-      name: "kWh/PAX",
-      yaxis: "y3",
-      line: { color: "#a855f7", width: 3, dash: "dot" },
-      marker: { size: 7 },
-      connectgaps: false,
-      hovertemplate: "%{x}<br>kWh/PAX: %{y:.2f}<extra></extra>",
-      visible: getVisibleState("cep")
-    },
-    {
-      x: meses,
-      y: weather.cdd,
-      type: "scatter",
-      mode: "lines+markers",
-      name: "CDD",
-      yaxis: "y4",
-      line: { color: "#ef4444", width: 3 },
-      marker: { size: 7, symbol: "diamond" },
-      connectgaps: false,
-      hovertemplate: "%{x}<br>CDD: %{y:.1f}<extra></extra>",
-      visible: getVisibleState("cdd")
-    },
-    {
-      x: meses,
-      y: weather.hdd,
-      type: "scatter",
-      mode: "lines+markers",
-      name: "HDD",
-      yaxis: "y4",
-      line: { color: "#2563eb", width: 3 },
-      marker: { size: 7, symbol: "diamond" },
-      connectgaps: false,
-      hovertemplate: "%{x}<br>HDD: %{y:.1f}<extra></extra>",
-      visible: getVisibleState("hdd")
-    }
+    {x:meses,y:d.cons,type:"bar",name:"Consumo",yaxis:"y",marker:{color:"#0284c7"},visible:getVisibleState("cons")},
+    {x:meses,y:d.rn,type:"scatter",mode:"lines+markers",name:"RN",yaxis:"y2",line:{color:"#0f172a",width:3},visible:getVisibleState("rn")},
+    {x:meses,y:d.pax,type:"scatter",mode:"lines+markers",name:"PAX",yaxis:"y2",line:{color:"#16a34a",width:3},visible:getVisibleState("pax")},
+    {x:meses,y:ce_rn,type:"scatter",mode:"lines+markers",name:"kWh/RN",yaxis:"y3",line:{color:"#f97316",width:3,dash:"dot"},visible:getVisibleState("cer")},
+    {x:meses,y:ce_pax,type:"scatter",mode:"lines+markers",name:"kWh/PAX",yaxis:"y3",line:{color:"#a855f7",width:3,dash:"dot"},visible:getVisibleState("cep")},
+    {x:meses,y:weather.cdd,type:"scatter",mode:"lines+markers",name:"CDD",yaxis:"y4",line:{color:"#ef4444",width:3},visible:getVisibleState("cdd")},
+    {x:meses,y:weather.hdd,type:"scatter",mode:"lines+markers",name:"HDD",yaxis:"y4",line:{color:"#2563eb",width:3},visible:getVisibleState("hdd")}
   ];
 
-  const layout = {
-    margin: { t: 30, r: 130, b: 50, l: 65 },
-    paper_bgcolor: "#ffffff",
-    plot_bgcolor: "#ffffff",
-    barmode: "group",
-    hovermode: "x unified",
-    legend: {
-      orientation: "h",
-      yanchor: "bottom",
-      y: 1.15,
-      xanchor: "left",
-      x: 0
-    },
-    xaxis: {
-      title: "Mes",
-      tickfont: { size: 12 },
-      gridcolor: "#eef2f7"
-    },
-    yaxis: {
-      title: "Consumo (kWh)",
-      titlefont: { color: "#0ea5e9" },
-      tickfont: { color: "#0ea5e9" },
-      gridcolor: "#eef2f7",
-      zeroline: false
-    },
-    yaxis2: {
-      title: "RN / PAX",
-      titlefont: { color: "#0f172a" },
-      tickfont: { color: "#0f172a" },
-      overlaying: "y",
-      side: "right",
-      anchor: "x",
-      zeroline: false
-    },
-    yaxis3: {
-      title: "Ratios",
-      titlefont: { color: "#f97316" },
-      tickfont: { color: "#f97316" },
-      overlaying: "y",
-      side: "right",
-      anchor: "free",
-      position: 0.92,
-      zeroline: false
-    },
-    yaxis4: {
-      title: "CDD / HDD",
-      titlefont: { color: "#ef4444" },
-      tickfont: { color: "#ef4444" },
-      overlaying: "y",
-      side: "right",
-      anchor: "free",
-      position: 0.985,
-      zeroline: false
-    }
-  };
-
-  const config = {
-    responsive: true,
-    displaylogo: false,
-    modeBarButtonsToRemove: ["select2d", "lasso2d"]
-  };
-
-  Plotly.newPlot(chartEl, traces, layout, config);
+  Plotly.newPlot("detailChart", traces, {
+    margin:{t:30,r:130,b:50,l:65},
+    paper_bgcolor:"#ffffff",
+    plot_bgcolor:"#ffffff",
+    hovermode:"x unified",
+    barmode:"group",
+    legend:{orientation:"h",y:1.15,x:0},
+    xaxis:{title:"Mes",gridcolor:"#eef2f7"},
+    yaxis:{title:"Consumo (kWh)",tickfont:{color:"#0284c7"},titlefont:{color:"#0284c7"},gridcolor:"#eef2f7"},
+    yaxis2:{title:"RN / PAX",overlaying:"y",side:"right",tickfont:{color:"#0f172a"},titlefont:{color:"#0f172a"}},
+    yaxis3:{title:"Ratios",overlaying:"y",side:"right",anchor:"free",position:0.92,tickfont:{color:"#f97316"},titlefont:{color:"#f97316"}},
+    yaxis4:{title:"CDD / HDD",overlaying:"y",side:"right",anchor:"free",position:0.985,tickfont:{color:"#ef4444"},titlefont:{color:"#ef4444"}}
+  }, {responsive:true, displaylogo:false});
 }
 
 ["cons","rn","pax","cer","cep","cdd","hdd"].forEach(id=>{
-  document.addEventListener("change", (e)=>{
-    if(e.target && e.target.id === id && !document.getElementById("dashboard").classList.contains("hidden")){
-      pintar(selector.value);
+  document.addEventListener("change", e=>{
+    if(e.target && e.target.id === id && !document.getElementById("detailView").classList.contains("hidden")){
+      const selected = document.getElementById("selectorComplejo").value;
+      if(selected) renderDetail(selected);
     }
   });
 });
 
-llenarSelector();
-renderRanking();
+fillSelector();
+renderExecutiveKpis();
+renderRankingSection();
+renderPortfolioSection();
+renderTableSection();
 
-window.addEventListener("resize", () => {
-  if(!document.getElementById("inicio").classList.contains("hidden")){
-    renderRanking();
+window.addEventListener("resize", ()=>{
+  if(!document.getElementById("homeView").classList.contains("hidden")){
+    renderRankingSection();
+    renderPortfolioSection();
+    renderTableSection();
   }
 });
 </script>
-
 </body>
 </html>
