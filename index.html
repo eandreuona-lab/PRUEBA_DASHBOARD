@@ -1,169 +1,706 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ona Energy Dashboard 2026</title>
 
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
 <style>
-body{font-family:system-ui;margin:0;background:#f4f6f9;}
-.header{background:#0f172a;color:white;padding:1rem 2rem;font-weight:600;}
-.section{padding:2rem;}
-.card{background:white;border-radius:12px;padding:1.5rem;max-width:900px;margin:auto;box-shadow:0 10px 25px rgba(0,0,0,0.1);}
-button{padding:10px 16px;border:none;border-radius:8px;background:#0ea5e9;color:white;font-weight:600;cursor:pointer;}
-select{padding:10px 14px;border-radius:8px;border:1px solid #cbd5e1;min-width:280px;}
-#chart{height:520px;}
-.kpis{display:flex;gap:15px;margin:15px 0;}
-.kpi{flex:1;background:white;padding:15px;border-radius:10px}
-.kpi.bad{background:#fee2e2}
-.controls{margin:10px 0}
-.controls label{margin-right:10px}
+:root{
+  --bg:#f4f6f9;
+  --surface:#ffffff;
+  --surface-2:#e2e8f0;
+  --text:#0f172a;
+  --muted:#475569;
+  --primary:#0ea5e9;
+  --primary-dark:#0284c7;
+  --header:#0f172a;
+  --good:#ecfdf5;
+  --bad:#fee2e2;
+  --warn:#fff7ed;
+  --info:#eff6ff;
+  --border:#dbe4ee;
+  --shadow:0 8px 30px rgba(15,23,42,.08);
+  --radius:14px;
+}
+
+*{box-sizing:border-box}
+
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.header{
+  background:var(--header);
+  color:#fff;
+  padding:16px 20px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  box-shadow:0 2px 10px rgba(0,0,0,.12);
+}
+
+.header img{
+  height:42px;
+  width:auto;
+  object-fit:contain;
+  border-radius:8px;
+  background:rgba(255,255,255,.06);
+  padding:4px;
+}
+
+.header .title-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.header .title{
+  font-size:1.1rem;
+  font-weight:700;
+  line-height:1.2;
+}
+
+.header .subtitle{
+  font-size:.9rem;
+  color:rgba(255,255,255,.75);
+}
+
+.section{
+  padding:24px 16px 36px;
+}
+
+.container{
+  max-width:1180px;
+  margin:0 auto;
+}
+
+.card{
+  background:var(--surface);
+  border-radius:var(--radius);
+  padding:22px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+}
+
+.card h2{
+  margin:0 0 8px;
+  font-size:1.4rem;
+}
+
+.card p{
+  margin:0 0 18px;
+  color:var(--muted);
+}
+
+.controls{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+select,
+button{
+  font:inherit;
+}
+
+select{
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  min-width:300px;
+  background:#fff;
+  color:var(--text);
+}
+
+button{
+  padding:11px 16px;
+  border:none;
+  border-radius:10px;
+  background:var(--primary);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+button:hover{
+  background:var(--primary-dark);
+}
+
+button.secondary{
+  background:#e2e8f0;
+  color:#0f172a;
+}
+
+button.secondary:hover{
+  background:#cbd5e1;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+.topbar h2{
+  margin:0;
+}
+
+.topbar p{
+  margin:4px 0 0;
+  color:var(--muted);
+}
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap:12px;
+  margin:18px 0 20px;
+}
+
+.kpi{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:16px;
+  border-radius:12px;
+  box-shadow:var(--shadow);
+}
+
+.kpi.bad{background:var(--bad);}
+.kpi.good{background:var(--good);}
+.kpi.warn{background:var(--warn);}
+.kpi.info{background:var(--info);}
+
+.kpi .label{
+  font-size:.85rem;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+
+.kpi .value{
+  font-size:1.2rem;
+  font-weight:800;
+  color:var(--text);
+  line-height:1.25;
+}
+
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px 18px;
+  align-items:center;
+  margin:8px 0 18px;
+  padding:14px 16px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+}
+
+.filters strong{
+  margin-right:4px;
+}
+
+.filters label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:600;
+  color:var(--text);
+  cursor:pointer;
+}
+
+.filters input[type="checkbox"]{
+  width:16px;
+  height:16px;
+}
+
+.chart-card{
+  background:var(--surface);
+  border-radius:var(--radius);
+  padding:10px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+}
+
+#chart{
+  width:100%;
+  min-height:580px;
+}
+
+.help{
+  margin-top:12px;
+  font-size:.92rem;
+  color:var(--muted);
+}
+
+.hidden{
+  display:none !important;
+}
+
+.logo-fallback{
+  display:none;
+  width:42px;
+  height:42px;
+  border-radius:10px;
+  align-items:center;
+  justify-content:center;
+  background:#1e293b;
+  color:white;
+  font-weight:800;
+}
+
+@media (max-width: 640px){
+  .section{
+    padding:18px 12px 28px;
+  }
+
+  .card{
+    padding:18px;
+  }
+
+  .controls{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  select, button{
+    width:100%;
+    min-width:0;
+  }
+
+  #chart{
+    min-height:460px;
+  }
+
+  .filters{
+    padding:12px;
+    gap:10px 14px;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<div class="header">Ona Energy Dashboard 2026</div>
+<header class="header">
+  <img src="logo_ona.jpg" alt="Logo Ona" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
+  <div id="logoFallback" class="logo-fallback" aria-hidden="true">O</div>
+  <div class="title-wrap">
+    <div class="title">Ona Energy Dashboard 2026</div>
+    <div class="subtitle">Consumo, ocupación, ratios y grados día</div>
+  </div>
+</header>
 
-<div id="inicio" class="section">
-<div class="card">
-<h2>Selecciona complejo</h2>
-<div style="display:flex;gap:10px;">
-<select id="selector"></select>
-<button onclick="verDashboard()">VER DATOS</button>
-</div>
-</div>
-</div>
+<main>
+  <section id="inicio" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>Selecciona complejo</h2>
+        <p>Escoge un complejo para visualizar consumo, RN, PAX, ratios energéticos y variables climáticas de enero a mayo.</p>
 
-<div id="dashboard" class="section" style="display:none;">
-<button onclick="volver()">← Volver</button>
-<h2 id="titulo"></h2>
+        <div class="controls">
+          <label for="selector" style="position:absolute;left:-9999px;">Selecciona complejo</label>
+          <select id="selector"></select>
+          <button type="button" onclick="verDashboard()">Ver datos</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div id="kpis" class="kpis"></div>
+  <section id="dashboard" class="section hidden">
+    <div class="container">
 
-<div class="controls">
-<label><input type="checkbox" id="rn" checked> RN</label>
-<label><input type="checkbox" id="pax" checked> PAX</label>
-<label><input type="checkbox" id="cer" checked> kWh/RN</label>
-<label><input type="checkbox" id="cep" checked> kWh/PAX</label>
-<label><input type="checkbox" id="hdd" checked> HDD</label>
-<label><input type="checkbox" id="cdd" checked> CDD</label>
-</div>
+      <div class="topbar">
+        <div>
+          <h2 id="titulo">Dashboard</h2>
+          <p id="subtitulo">Análisis mensual del complejo seleccionado.</p>
+        </div>
+        <button type="button" class="secondary" onclick="volver()">← Volver</button>
+      </div>
 
-<div id="chart"></div>
-</div>
+      <div id="kpis" class="kpis"></div>
+
+      <div class="filters" aria-label="Filtros de series">
+        <strong>Series visibles:</strong>
+        <label><input type="checkbox" id="cons" checked> Consumo</label>
+        <label><input type="checkbox" id="rn" checked> RN</label>
+        <label><input type="checkbox" id="pax" checked> PAX</label>
+        <label><input type="checkbox" id="cer" checked> kWh/RN</label>
+        <label><input type="checkbox" id="cep" checked> kWh/PAX</label>
+        <label><input type="checkbox" id="cdd" checked> CDD</label>
+        <label><input type="checkbox" id="hdd" checked> HDD</label>
+      </div>
+
+      <div class="chart-card">
+        <div id="chart"></div>
+      </div>
+
+      <div class="help">
+        Ejes: izquierda para consumo, derecha para RN/PAX, segundo eje derecho para ratios y tercer eje derecho para CDD/HDD.
+      </div>
+
+    </div>
+  </section>
+</main>
 
 <script>
-
-const meses=["ENE","FEB","MAR","ABR","MAY"];
-
-const CLIMA={
-LEMG:{hdd:[106.3,73.2,68.2,22.6,4],cdd:[1.2,4.8,3.3,25.2,76.9]},
-LEPA:{hdd:[120.9,60.1,89.5,58.6,10.4],cdd:[0,3.7,0.2,36.1,78.8]},
-LEBL:{hdd:[161.8,81.5,75.7,23.3,4.4],cdd:[0,1.8,0.1,13.2,66.6]},
-GCTS:{hdd:[1.1,0.2,0.3,0,0],cdd:[25.2,49.2,29.9,61.7,81.8]},
-GCXO:{hdd:[65.6,39.8,70.6,37,18.4],cdd:[0,12.6,0,10,18.5]}
-};
-
-const ESTACION={
-"Be Live OROTAVA":"GCXO",
-"BEVERLY HILLS HEIGHTS (EXCEL)":"GCTS",
-"BEVERLY HILLS SUITES (EXCEL)":"GCTS",
-"HOLLYWOOD MIRAGE (EXCEL)":"GCTS",
-"PALM BEACH (EXCEL)":"GCTS",
-"ONA MOSAIC":"LEBL",
-"ONA VILLAGE CALA D'OR":"LEPA",
-"ONA CAMPANARIO":"LEMG",
-"ONA DIANA PARK":"LEMG",
-"ONA LAS RAMPAS":"LEMG",
-"ONA LIVING BARCELONA":"LEBL",
-"ONA MARBELLA INN":"LEMG",
-"ONA MARINAS DE NERJA":"LEMG",
-"ONA PALAMÓS":"LEBL",
-"ONA PALMIRA PAGUERA":"LEPA",
-"ONA PALMIRA PARADISE":"LEPA",
-"ONA VALLE ROMANO":"LEMG",
-"Hotel Ritual":"LEMG"
-};
+const meses = ["ENE","FEB","MAR","ABR","MAY"];
 
 const DATA = {
-"Be Live OROTAVA":{cons:[70968,71201,75038,73788,82784],rn:[5182,5421,5131,3641,5113],pax:[9609,9808,9531,7181,9777]},
-"BEVERLY HILLS HEIGHTS (EXCEL)":{cons:[70784,63456,62626,50464,56724],rn:[3306,3068,3305,2784,2924],pax:[8702,8249,8174,7384,7262]},
-"BEVERLY HILLS SUITES (EXCEL)":{cons:[89868,84354,86462,82495,79295],rn:[4100,3796,4079,3103,2651],pax:[9100,8690,8822,7247,5546]},
-"HOLLYWOOD MIRAGE (EXCEL)":{cons:[198930,183746,204842,199749,209902],rn:[9722,8917,9432,8449,8336],pax:[24020,22489,22666,20167,18223]},
-"PALM BEACH (EXCEL)":{cons:[151323,147660,154501,154456,156819],rn:[9241,8528,9288,8285,7471],pax:[24246,23854,25776,22502,17708]},
-"ONA MOSAIC":{cons:[18717,12797,13981,16944,19458],rn:[1531,1400,1426,1497,1599],pax:[2632,2432,2554,3028,2888]},
-"ONA VILLAGE CALA D'OR":{cons:[2595,5669,18219,22121,22270],rn:[0,0,428,1170,1246],pax:[0,0,1137,3622,3636]},
-"ONA CAMPANARIO":{cons:[78822,63147,59933,41674,34003],rn:[980,1032,1169,1124,1235],pax:[1755,2032,2170,2621,2033]},
-"ONA DIANA PARK":{cons:[4335,4892,28156,31958,34306],rn:[0,0,1568,2318,2578],pax:[0,0,2084,3476,4208]},
-"ONA LAS RAMPAS":{cons:[3058,4788,26463,32421,42346],rn:[0,0,1675,3149,3492],pax:[0,0,2622,4049,5071]},
-"ONA LIVING BARCELONA":{cons:[7994,5380,5408,3593,5115],rn:[534,545,504,571,592],pax:[1175,1164,1103,1760,1343]},
-"ONA MARBELLA INN":{cons:[9257,13131,19152,17496,17358],rn:[436,948,1645,1644,1706],pax:[764,1633,2830,3157,3079]},
-"ONA MARINAS DE NERJA":{cons:[91529,82501,90101,87829,105210],rn:[4544,5309,6211,6278,6316],pax:[9510,10984,11994,15917,15526]},
-"ONA PALAMÓS":{cons:[2304,2306,17117,20017,33327],rn:[0,0,1025,1874,2216],pax:[0,0,2059,3379,4668]},
-"ONA PALMIRA PAGUERA":{cons:[2399,2228,24017,59368,66399],rn:[0,0,1291,6068,7191],pax:[0,0,2535,12086,13592]},
-"ONA PALMIRA PARADISE":{cons:[8230,8745,7679,59086,66399],rn:[0,0,1291,6068,7191],pax:[0,0,2535,12086,13592]},
-"ONA VALLE ROMANO":{cons:[243943,223965,247885,255286,240225],rn:[6155,7327,8831,9577,10927],pax:[12579,14852,19034,22196,23631]},
-"Hotel Ritual":{cons:[16972,11886,52068,59255,78681],rn:[455,28,3236,3785,4549],pax:[697,2542,4996,5952,7007]}
+  "Be Live OROTAVA": {cons:[70968,71201,75038,73788,82784],rn:[5182,5421,5131,3641,5113],pax:[9609,9808,9531,7181,9777]},
+  "BEVERLY HILLS HEIGHTS (EXCEL)": {cons:[70784,63456,62626,50464,56724],rn:[3306,3068,3305,2784,2924],pax:[8702,8249,8174,7384,7262]},
+  "BEVERLY HILLS SUITES (EXCEL)": {cons:[89868,84354,86462,82495,79295],rn:[4100,3796,4079,3103,2651],pax:[9100,8690,8822,7247,5546]},
+  "HOLLYWOOD MIRAGE (EXCEL)": {cons:[198930,183746,204842,199749,209902],rn:[9722,8917,9432,8449,8336],pax:[24020,22489,22666,20167,18223]},
+  "PALM BEACH (EXCEL)": {cons:[151323,147660,154501,154456,156819],rn:[9241,8528,9288,8285,7471],pax:[24246,23854,25776,22502,17708]},
+  "ONA MOSAIC": {cons:[18717,12797,13981,16944,19458],rn:[1531,1400,1426,1497,1599],pax:[2632,2432,2554,3028,2888]},
+  "ONA VILLAGE CALA D'OR": {cons:[2595,5669,18219,22121,22270],rn:[0,0,428,1170,1246],pax:[0,0,1137,3622,3636]},
+  "ONA CAMPANARIO": {cons:[78822,63147,59933,41674,34003],rn:[980,1032,1169,1124,1235],pax:[1755,2032,2170,2621,2033]},
+  "ONA DIANA PARK": {cons:[4335,4892,28156,31958,34306],rn:[0,0,1568,2318,2578],pax:[0,0,2084,3476,4208]},
+  "ONA LAS RAMPAS": {cons:[3058,4788,26463,32421,42346],rn:[0,0,1675,3149,3492],pax:[0,0,2622,4049,5071]},
+  "ONA LIVING BARCELONA": {cons:[7994,5380,5408,3593,5115],rn:[534,545,504,571,592],pax:[1175,1164,1103,1760,1343]},
+  "ONA MARBELLA INN": {cons:[9257,13131,19152,17496,17358],rn:[436,948,1645,1644,1706],pax:[764,1633,2830,3157,3079]},
+  "ONA MARINAS DE NERJA": {cons:[91529,82501,90101,87829,105210],rn:[4544,5309,6211,6278,6316],pax:[9510,10984,11994,15917,15526]},
+  "ONA PALAMÓS": {cons:[2304,2306,17117,20017,33327],rn:[0,0,1025,1874,2216],pax:[0,0,2059,3379,4668]},
+  "ONA PALMIRA PAGUERA": {cons:[2399,2228,24017,59368,66399],rn:[0,0,1291,6068,7191],pax:[0,0,2535,12086,13592]},
+  "ONA PALMIRA PARADISE": {cons:[8230,8745,7679,59086,66399],rn:[0,0,1291,6068,7191],pax:[0,0,2535,12086,13592]},
+  "ONA VALLE ROMANO": {cons:[243943,223965,247885,255286,240225],rn:[6155,7327,8831,9577,10927],pax:[12579,14852,19034,22196,23631]},
+  "Hotel Ritual": {cons:[16972,11886,52068,59255,78681],rn:[455,28,3236,3785,4549],pax:[697,2542,4996,5952,7007]}
 };
 
-// selector
-const selector=document.getElementById("selector");
-Object.keys(DATA).forEach(c=>{
-let op=document.createElement("option");
-op.value=c;
-op.textContent=c;
-selector.appendChild(op);
-});
+const COMPLEJO_ESTACION = {
+  "ONA MARINAS DE NERJA": "LEMG",
+  "ONA CAMPANARIO": "LEMG",
+  "ONA LAS RAMPAS": "LEMG",
+  "ONA VALLE ROMANO": "LEMG",
+  "ONA PALMIRA PAGUERA": "LEPA",
+  "ONA PALMIRA PARADISE": "LEPA",
+  "ONA PALAMÓS": "LEGE",
+  "ONA LIVING BARCELONA": "LEBL",
+  "ONA MOSAIC": "LEBL",
+  "ONA CALA PI": "LEPA",
+  "ONA AUCANADA": "LEPA",
+  "ONA JARDINES PARAISOL": "LERS",
+  "ONA OGISAKA GARDEN": "LEAL",
+  "ONA SUITES SALOU (antes NOVELTY)": "LERS",
+  "ONA LAS ZARZAS": "LEAL",
+  "ONA ALANDA CLUB MARBELLA": "LEMG",
+  "BAHÍA BLANCA": "GCLP",
+  "BEVERLY HILLS HEIGHTS (EXCEL)": "GCTS",
+  "BEVERLY HILLS SUITES (EXCEL)": "GCTS",
+  "HOLLYWOOD MIRAGE (EXCEL)": "GCTS",
+  "PALM BEACH (EXCEL)": "GCTS",
+  "ONA GARDEN LAGO": "LEPA",
+  "ONA AQUAMARINA": "LERS",
+  "ONA VILLAGE CALA D'OR": "LEPA",
+  "Hotel Ritual": "LEMG",
+  "ONA DIANA PARK": "LEMG",
+  "ONA MARBELLA INN": "LEMG",
+  "Be Live OROTAVA": "GCXO",
+  "ONA MAR MENOR": "LELC"
+};
+
+const WEATHER = {
+  "LELC": { cdd: [1.9, 12.4, 2.2, 35.5, 102.8], hdd: [96.9, 55.3, 63.1, 20.6, 3.3] },
+  "GCXO": { cdd: [0, 12.6, 0, 10.0, 18.5], hdd: [65.6, 39.8, 70.6, 37.0, 18.4] },
+  "LEMG": { cdd: [1.2, 4.8, 3.3, 25.2, 76.9], hdd: [106.3, 73.2, 68.2, 22.6, 4.0] },
+  "LEPA": { cdd: [0, 3.7, 0.2, 36.1, 78.8], hdd: [120.9, 60.1, 89.5, 58.6, 10.4] },
+  "LEGE": { cdd: [0, 2.3, 1.4, 31.0, 54.4], hdd: [235.8, 147.5, 149.6, 79.6, 42.4] },
+  "LEBL": { cdd: [0, 1.8, 0.1, 13.2, 66.6], hdd: [161.8, 81.5, 75.7, 23.3, 4.4] },
+  "LERS": { cdd: [0, 2.9, 2.1, 30.3, 72.5], hdd: [171.6, 98.6, 98.6, 47.2, 11.0] },
+  "LEAL": { cdd: [2.2, 16.9, 4.3, 43.8, 113.4], hdd: [84.2, 47.9, 53.3, 16.7, 1.3] },
+  "GCLP": { cdd: [23.7, 33.5, 26.1, 49.5, 80.1], hdd: [0.6, 0, 0.5, 0, 0] },
+  "GCTS": { cdd: [25.2, 49.2, 29.9, 61.7, 81.8], hdd: [1.1, 0.2, 0.3, 0, 0] }
+};
+
+const selector = document.getElementById("selector");
+const chartEl = document.getElementById("chart");
+
+const formatInt = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 });
+const formatDec = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
+
+function llenarSelector(){
+  selector.innerHTML = '<option value="">-- Selecciona un complejo --</option>';
+  Object.keys(DATA).sort((a,b)=>a.localeCompare(b,"es")).forEach(c=>{
+    const op = document.createElement("option");
+    op.value = c;
+    op.textContent = c;
+    selector.appendChild(op);
+  });
+}
+
+function safeDivide(a,b){
+  return b && b !== 0 ? a / b : null;
+}
+
+function avg(arr){
+  const valid = arr.filter(v => v !== null && Number.isFinite(v));
+  return valid.length ? valid.reduce((a,b)=>a+b,0) / valid.length : null;
+}
+
+function sumValid(arr){
+  const valid = arr.filter(v => v !== null && Number.isFinite(v));
+  return valid.length ? valid.reduce((a,b)=>a+b,0) : null;
+}
+
+function maxWithMonth(arr){
+  const valid = arr
+    .map((v,i)=>({v,i}))
+    .filter(item => item.v !== null && Number.isFinite(item.v));
+
+  if(!valid.length) return { value:null, month:"N/D" };
+
+  const max = valid.reduce((best,current)=> current.v > best.v ? current : best);
+  return { value:max.v, month:meses[max.i] };
+}
+
+function getVisibleState(id){
+  return document.getElementById(id).checked ? true : "legendonly";
+}
 
 function verDashboard(){
-document.getElementById("inicio").style.display="none";
-document.getElementById("dashboard").style.display="block";
-document.getElementById("titulo").innerText=selector.value;
-pintar(selector.value);
+  if(!selector.value){
+    alert("Selecciona un complejo antes de continuar.");
+    return;
+  }
+
+  document.getElementById("inicio").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  document.getElementById("titulo").textContent = selector.value;
+  pintar(selector.value);
 }
 
 function volver(){
-document.getElementById("inicio").style.display="block";
-document.getElementById("dashboard").style.display="none";
+  document.getElementById("inicio").classList.remove("hidden");
+  document.getElementById("dashboard").classList.add("hidden");
 }
 
-function pintar(c){
+function pintar(complejo){
+  const d = DATA[complejo];
+  if(!d) return;
 
-let d=DATA[c];
-let clima=CLIMA[ESTACION[c]];
+  const estacion = COMPLEJO_ESTACION[complejo] || null;
+  const weather = estacion && WEATHER[estacion]
+    ? WEATHER[estacion]
+    : { cdd:[null,null,null,null,null], hdd:[null,null,null,null,null] };
 
-let ce_rn=d.cons.map((v,i)=>d.rn[i]?v/d.rn[i]:null);
-let ce_pax=d.cons.map((v,i)=>d.pax[i]?v/d.pax[i]:null);
+  const ce_rn = d.cons.map((v,i)=>safeDivide(v,d.rn[i]));
+  const ce_pax = d.cons.map((v,i)=>safeDivide(v,d.pax[i]));
 
-let t=[];
+  const total = d.cons.reduce((a,b)=>a+b,0);
+  const media_rn = avg(ce_rn);
+  const media_pax = avg(ce_pax);
+  const peorRn = maxWithMonth(ce_rn);
+  const peorPax = maxWithMonth(ce_pax);
+  const totalCDD = sumValid(weather.cdd);
+  const totalHDD = sumValid(weather.hdd);
 
-// consumo
-t.push({x:meses,y:d.cons,type:'bar',name:'Consumo',marker:{color:'#3b5a73'},yaxis:'y1'});
+  document.getElementById("subtitulo").textContent =
+    estacion
+      ? `Análisis mensual de enero a mayo · Estación meteorológica ${estacion}`
+      : "Análisis mensual de enero a mayo · Sin estación asociada";
 
-// RN
-if(rn.checked)t.push({x:meses,y:d.rn,type:'scatter',name:'RN',line:{color:'#6b21a8'},yaxis:'y2'});
+  document.getElementById("kpis").innerHTML = `
+    <div class="kpi">
+      <div class="label">Consumo total</div>
+      <div class="value">${formatInt.format(total)} kWh</div>
+    </div>
+    <div class="kpi good">
+      <div class="label">kWh/RN medio</div>
+      <div class="value">${media_rn !== null ? formatDec.format(media_rn) : "N/D"}</div>
+    </div>
+    <div class="kpi bad">
+      <div class="label">Peor mes kWh/RN</div>
+      <div class="value">${peorRn.month}</div>
+    </div>
+    <div class="kpi good">
+      <div class="label">kWh/PAX medio</div>
+      <div class="value">${media_pax !== null ? formatDec.format(media_pax) : "N/D"}</div>
+    </div>
+    <div class="kpi info">
+      <div class="label">CDD acumulado</div>
+      <div class="value">${totalCDD !== null ? formatDec.format(totalCDD) : "N/D"}</div>
+    </div>
+    <div class="kpi warn">
+      <div class="label">HDD acumulado</div>
+      <div class="value">${totalHDD !== null ? formatDec.format(totalHDD) : "N/D"}</div>
+    </div>
+  `;
 
-// PAX
-if(pax.checked)t.push({x:meses,y:d.pax,type:'scatter',name:'PAX',line:{color:'#16a34a'},yaxis:'y2'});
+  const traces = [
+    {
+      x: meses,
+      y: d.cons,
+      type: "bar",
+      name: "Consumo",
+      yaxis: "y",
+      marker: { color: "#0ea5e9" },
+      hovertemplate: "%{x}<br>Consumo: %{y:,.0f} kWh<extra></extra>",
+      visible: getVisibleState("cons")
+    },
+    {
+      x: meses,
+      y: d.rn,
+      type: "scatter",
+      mode: "lines+markers",
+      name: "RN",
+      yaxis: "y2",
+      line: { color: "#0f172a", width: 3 },
+      marker: { size: 7 },
+      hovertemplate: "%{x}<br>RN: %{y:,.0f}<extra></extra>",
+      visible: getVisibleState("rn")
+    },
+    {
+      x: meses,
+      y: d.pax,
+      type: "scatter",
+      mode: "lines+markers",
+      name: "PAX",
+      yaxis: "y2",
+      line: { color: "#16a34a", width: 3 },
+      marker: { size: 7 },
+      hovertemplate: "%{x}<br>PAX: %{y:,.0f}<extra></extra>",
+      visible: getVisibleState("pax")
+    },
+    {
+      x: meses,
+      y: ce_rn,
+      type: "scatter",
+      mode: "lines+markers",
+      name: "kWh/RN",
+      yaxis: "y3",
+      line: { color: "#f97316", width: 3, dash: "dot" },
+      marker: { size: 7 },
+      connectgaps: false,
+      hovertemplate: "%{x}<br>kWh/RN: %{y:.2f}<extra></extra>",
+      visible: getVisibleState("cer")
+    },
+    {
+      x: meses,
+      y: ce_pax,
+      type: "scatter",
+      mode: "lines+markers",
+      name: "kWh/PAX",
+      yaxis: "y3",
+      line: { color: "#a855f7", width: 3, dash: "dot" },
+      marker: { size: 7 },
+      connectgaps: false,
+      hovertemplate: "%{x}<br>kWh/PAX: %{y:.2f}<extra></extra>",
+      visible: getVisibleState("cep")
+    },
+    {
+      x: meses,
+      y: weather.cdd,
+      type: "scatter",
+      mode: "lines+markers",
+      name: "CDD",
+      yaxis: "y4",
+      line: { color: "#ef4444", width: 3 },
+      marker: { size: 7, symbol: "diamond" },
+      connectgaps: false,
+      hovertemplate: "%{x}<br>CDD: %{y:.1f}<extra></extra>",
+      visible: getVisibleState("cdd")
+    },
+    {
+      x: meses,
+      y: weather.hdd,
+      type: "scatter",
+      mode: "lines+markers",
+      name: "HDD",
+      yaxis: "y4",
+      line: { color: "#2563eb", width: 3 },
+      marker: { size: 7, symbol: "diamond" },
+      connectgaps: false,
+      hovertemplate: "%{x}<br>HDD: %{y:.1f}<extra></extra>",
+      visible: getVisibleState("hdd")
+    }
+  ];
 
-// ratios
-if(cer.checked)t.push({x:meses,y:ce_rn,type:'scatter',name:'kWh/RN',line:{color:'#d946ef'},yaxis:'y3'});
-if(cep.checked)t.push({x:meses,y:ce_pax,type:'scatter',name:'kWh/PAX',line:{color:'#86efac'},yaxis:'y3'});
+  const layout = {
+    margin: { t: 30, r: 130, b: 50, l: 65 },
+    paper_bgcolor: "#ffffff",
+    plot_bgcolor: "#ffffff",
+    barmode: "group",
+    hovermode: "x unified",
+    legend: {
+      orientation: "h",
+      yanchor: "bottom",
+      y: 1.15,
+      xanchor: "left",
+      x: 0
+    },
+    xaxis: {
+      title: "Mes",
+      tickfont: { size: 12 },
+      gridcolor: "#eef2f7"
+    },
+    yaxis: {
+      title: "Consumo (kWh)",
+      titlefont: { color: "#0ea5e9" },
+      tickfont: { color: "#0ea5e9" },
+      gridcolor: "#eef2f7",
+      zeroline: false
+    },
+    yaxis2: {
+      title: "RN / PAX",
+      titlefont: { color: "#0f172a" },
+      tickfont: { color: "#0f172a" },
+      overlaying: "y",
+      side: "right",
+      anchor: "x",
+      zeroline: false
+    },
+    yaxis3: {
+      title: "Ratios",
+      titlefont: { color: "#f97316" },
+      tickfont: { color: "#f97316" },
+      overlaying: "y",
+      side: "right",
+      anchor: "free",
+      position: 0.92,
+      zeroline: false
+    },
+    yaxis4: {
+      title: "CDD / HDD",
+      titlefont: { color: "#ef4444" },
+      tickfont: { color: "#ef4444" },
+      overlaying: "y",
+      side: "right",
+      anchor: "free",
+      position: 0.985,
+      zeroline: false
+    }
+  };
 
-// clima
-if(hdd.checked)t.push({x:meses,y:clima.hdd,type:'scatter',name:'HDD',line:{color:'#dc2626',dash:'dash'},yaxis:'y3'});
-if(cdd.checked)t.push({x:meses,y:clima.cdd,type:'scatter',name:'CDD',line:{color:'#1e3a8a',dash:'dash'},yaxis:'y3'});
+  const config = {
+    responsive: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: ["select2d", "lasso2d"]
+  };
 
-Plotly.newPlot("chart",t,{
-yaxis:{title:'Consumo (kWh)'},
-yaxis2:{overlaying:'y',side:'right'},
-yaxis3:{overlaying:'y',side:'right',position:0.96},
-hovermode:'x unified'
+  Plotly.newPlot(chartEl, traces, layout, config);
+}
+
+["cons","rn","pax","cer","cep","cdd","hdd"].forEach(id=>{
+  document.addEventListener("change", (e)=>{
+    if(e.target && e.target.id === id && !document.getElementById("dashboard").classList.contains("hidden")){
+      pintar(selector.value);
+    }
+  });
 });
-}
 
+llenarSelector();
 </script>
 
 </body>
