@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ona Energy Dashboard 2026</title>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+<style>
+body{font-family:system-ui;margin:0;background:#f4f6f9;}
+.header{background:#0f172a;color:white;padding:1rem 2rem;font-weight:600;}
+.section{padding:2rem;}
+.card{background:white;border-radius:12px;padding:1.5rem;max-width:900px;margin:auto;box-shadow:0 10px 25px rgba(0,0,0,0.1);}
+
+button{padding:10px 16px;border:none;border-radius:8px;background:#0ea5e9;color:white;font-weight:600;cursor:pointer;}
+button:hover{background:#0284c7;}
+
+select{
+  padding:10px 14px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+  min-width:280px;
+}
+
+#chart{height:520px;}
+
+.kpis{display:flex;gap:15px;margin:15px 0;}
+.kpi{flex:1;background:white;padding:15px;border-radius:10px}
+.kpi.bad{background:#fee2e2}
+
+.controls{margin:10px 0}
+.controls label{margin-right:10px}
+</style>
+</head>
+
+<body>
+
+<div class="header">Ona Energy Dashboard 2026</div>
+
+<div id="inicio" class="section">
+<div class="card">
+<h2>Selecciona complejo</h2>
+
+<div style="display:flex;gap:10px;align-items:center;">
+<select id="selector"></select>
+<button onclick="verDashboard()">VER DATOS</button>
+</div>
+
+</div>
+</div>
+
+<div id="dashboard" class="section" style="display:none;">
+<button onclick="volver()">← Volver</button>
+<h2 id="titulo"></h2>
+
+<div id="kpis" class="kpis"></div>
+
+<div class="controls">
+<label><input type="checkbox" id="rn" checked> RN</label>
+<label><input type="checkbox" id="pax" checked> PAX</label>
+<label><input type="checkbox" id="cer" checked> kWh/RN</label>
+<label><input type="checkbox" id="cep" checked> kWh/PAX</label>
+<label><input type="checkbox" id="hdd" checked> HDD</label>
+<label><input type="checkbox" id="cdd" checked> CDD</label>
+</div>
+
+<div id="chart"></div>
+</div>
+
+<script>
+
+const meses=["ENE","FEB","MAR","ABR","MAY"];
+
+// CLIMA
+const CLIMA={
+LEMG:{hdd:[106.3,73.2,68.2,22.6,4],cdd:[1.2,4.8,3.3,25.2,76.9]},
+LEPA:{hdd:[120.9,60.1,89.5,58.6,10.4],cdd:[0,3.7,0.2,36.1,78.8]},
+LEBL:{hdd:[161.8,81.5,75.7,23.3,4.4],cdd:[0,1.8,0.1,13.2,66.6]},
+GCTS:{hdd:[1.1,0.2,0.3,0,0],cdd:[25.2,49.2,29.9,61.7,81.8]},
+GCXO:{hdd:[65.6,39.8,70.6,37,18.4],cdd:[0,12.6,0,10,18.5]}
+};
+
+// ESTACIONES
+const ESTACION={
+"ONA VALLE ROMANO":"LEMG",
+"ONA CAMPANARIO":"LEMG",
+"ONA MARBELLA INN":"LEMG",
+"ONA MARINAS DE NERJA":"LEMG",
+"ONA DIANA PARK":"LEMG",
+"ONA LAS RAMPAS":"LEMG",
+"Hotel Ritual":"LEMG",
+
+"ONA PALMIRA PAGUERA":"LEPA",
+"ONA PALMIRA PARADISE":"LEPA",
+"ONA VILLAGE CALA D'OR":"LEPA",
+
+"ONA LIVING BARCELONA":"LEBL",
+"ONA MOSAIC":"LEBL",
+
+"BEVERLY HILLS HEIGHTS (EXCEL)":"GCTS",
+"BEVERLY HILLS SUITES (EXCEL)":"GCTS",
+"HOLLYWOOD MIRAGE (EXCEL)":"GCTS",
+"PALM BEACH (EXCEL)":"GCTS",
+
+"Be Live OROTAVA":"GCXO"
+};
+
+// DATA COMPLETA
+const DATA = {
+"Hotel Ritual":{cons:[16972,11886,52068,59255,78681],rn:[455,28,3236,3785,4549],pax:[697,2542,4996,5952,7007]},
+"ONA VALLE ROMANO":{cons:[243943,223965,247885,255286,240225],rn:[6155,7327,8831,9577,10927],pax:[12579,14852,19034,22196,23631]},
+"Be Live OROTAVA":{cons:[70968,71201,75038,73788,82784],rn:[5182,5421,5131,3641,5113],pax:[9609,9808,9531,7181,9777]}
+};
+
+// SELECT
+const selector=document.getElementById("selector");
+Object.keys(DATA).forEach(c=>{
+let op=document.createElement("option");
+op.value=c;
+op.textContent=c;
+selector.appendChild(op);
+});
+
+function verDashboard(){
+inicio.style.display="none";
+dashboard.style.display="block";
+titulo.innerText=selector.value;
+pintar(selector.value);
+}
+
+function volver(){
+inicio.style.display="block";
+dashboard.style.display="none";
+}
+
+function calcularKPIs(c){
+let d=DATA[c];
+
+let total=d.cons.reduce((a,b)=>a+b,0);
+
+let ce_rn=d.cons.map((v,i)=> d.rn[i]?v/d.rn[i]:0);
+let ce_pax=d.cons.map((v,i)=> d.pax[i]?v/d.pax[i]:0);
+
+let media_rn=ce_rn.filter(v=>v>0).reduce((a,b)=>a+b,0)/ce_rn.filter(v=>v>0).length;
+let media_pax=ce_pax.filter(v=>v>0).reduce((a,b)=>a+b,0)/ce_pax.filter(v=>v>0).length;
+
+let max=Math.max(...ce_pax);
+let idx=ce_pax.indexOf(max);
+
+kpis.innerHTML=`
+<div class="kpi"><b>Consumo total</b><br>${total.toLocaleString()} kWh</div>
+<div class="kpi"><b>kWh/RN medio</b><br>${media_rn.toFixed(2)}</div>
+<div class="kpi"><b>kWh/PAX medio</b><br>${media_pax.toFixed(2)}</div>
+<div class="kpi bad"><b>⚠ Peor mes</b><br>${meses[idx]} (${max.toFixed(2)})</div>
+`;
+}
+
+function pintar(c){
+
+let d=DATA[c];
+let clima=CLIMA[ESTACION[c]]||CLIMA.LEMG;
+
+let ce_rn=d.cons.map((v,i)=> d.rn[i]?v/d.rn[i]:0);
+let ce_pax=d.cons.map((v,i)=> d.pax[i]?v/d.pax[i]:0);
+
+calcularKPIs(c);
+
+let t=[];
+
+// ✅ COLORES FIJOS (CLAVE)
+
+// Consumo
+t.push({
+x:meses,y:d.cons,type:'bar',
+name:'Consumo (kWh)',
+marker:{color:'#3b5a73'},
+yaxis:'y1'
+});
+
+// RN
+if(rn.checked)t.push({
+x:meses,y:d.rn,type:'scatter',mode:'lines+markers',
+name:'RN',
+line:{color:'#6b21a8',width:2},
+yaxis:'y2'
+});
+
+// PAX
+if(pax.checked)t.push({
+x:meses,y:d.pax,type:'scatter',mode:'lines+markers',
+name:'PAX',
+line:{color:'#16a34a',width:2},
+yaxis:'y2'
+});
+
+// kWh/RN
+if(cer.checked)t.push({
+x:meses,y:ce_rn,type:'scatter',mode:'lines+markers',
+name:'kWh/RN',
+line:{color:'#d946ef',width:2},
+yaxis:'y3'
+});
+
+// kWh/PAX
+if(cep.checked)t.push({
+x:meses,y:ce_pax,type:'scatter',mode:'lines+markers',
+name:'kWh/PAX',
+line:{color:'#86efac',width:2},
+yaxis:'y3'
+});
+
+// HDD
+if(hdd.checked)t.push({
+x:meses,y:clima.hdd,type:'scatter',mode:'lines+markers',
+name:'HDD',
+line:{color:'#dc2626',dash:'dash',width:2},
+yaxis:'y3'
+});
+
+// CDD
+if(cdd.checked)t.push({
+x:meses,y:clima.cdd,type:'scatter',mode:'lines+markers',
+name:'CDD',
+line:{color:'#1e3a8a',dash:'dash',width:2},
+yaxis:'y3'
+});
+
+Plotly.newPlot("chart",t,{
+xaxis:{title:'Mes'},
+yaxis:{title:'Consumo (kWh)'},
+yaxis2:{overlaying:'y',side:'right'},
+yaxis3:{overlaying:'y',side:'right',position:0.97},
+legend:{orientation:'h'},
+hovermode:'x unified'
+});
+}
+
+document.querySelectorAll("input").forEach(i=>{
+i.addEventListener("change",()=>pintar(selector.value));
+});
+
+</script>
+
+</body>
+</html>
